@@ -270,18 +270,22 @@ namespace Monogame_Shooter
                 #region Collide
                 if (oldRectangle.Right < currentRectangle.myHitbox.Left && currentRectangle.myHitbox.Right >= oldRectangle.Left) // Left
                 {
-                    playerPos.X = currentRectangle.myHitbox.Location.X;
+                    playerPos.X = lastPosition.X;
+                    playerPos.Y = lastPosition.Y;
                 }
                 if (oldRectangle.Left >= currentRectangle.myHitbox.Right && currentRectangle.myHitbox.Left < oldRectangle.Right) // Right
                 {
-                    playerPos.X = currentRectangle.myHitbox.Location.X;
+                    playerPos.X = lastPosition.X;
+                    playerPos.Y = lastPosition.Y;
                 }
                 if (oldRectangle.Bottom < currentRectangle.myHitbox.Top && currentRectangle.myHitbox.Bottom >= oldRectangle.Top) // Up
                 {
-                    playerPos.Y = currentRectangle.myHitbox.Location.Y;
+                    playerPos.X = lastPosition.X;
+                    playerPos.Y = lastPosition.Y;
                 }
                 if (oldRectangle.Top >= currentRectangle.myHitbox.Bottom && currentRectangle.myHitbox.Top < oldRectangle.Bottom) // Down
                 {
+                    playerPos.X = currentRectangle.myHitbox.Location.X;
                     myJumpForce = 0;
                     myGravity = 0;
                     myJumpFlag = true;
