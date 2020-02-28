@@ -43,8 +43,8 @@ namespace Monogame_Shooter
         {
             for (int n = 0; n < aCount; n++)
             {
-                int tempBlockCountWidth = myRNG.Next(3, 6);
-                int tempBlockCountHeight = myRNG.Next(2, 4);
+                int tempBlockCountWidth = myRNG.Next(18, 25);
+                int tempBlockCountHeight = myRNG.Next(3, 5);
                 Texture2D tempPlatformTexture = new Texture2D(Game1.graphics.GraphicsDevice, tempBlockCountWidth * myBlockWidth, tempBlockCountHeight * myBlockHeight);
                 for (int i = 0; i < tempBlockCountHeight; i++)
                 {

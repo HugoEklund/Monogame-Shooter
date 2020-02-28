@@ -35,7 +35,7 @@ namespace Monogame_Shooter
 
         public void Update()
         {
-            myHitbox.Location -= new Point(2, 0);
+            myHitbox.Location -= new Point(3, 0);
         }
     }
 }

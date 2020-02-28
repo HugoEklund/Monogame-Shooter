@@ -37,6 +37,9 @@ namespace Monogame_Shooter
         int oldBulletCount;
 
         //Player
+        public Rectangle oldRectangle;
+        public Rectangle currentRectangle;
+        public Vector2 lastPosition;
         private Texture2D myPlayerTexture;
         private Texture2D myEnemy;
         private Texture2D hpBar;
@@ -141,9 +144,11 @@ namespace Monogame_Shooter
 
         protected override void Update(GameTime gameTime)
         {
+            
+
             PlatformManager.Update();
             hitBox = new Rectangle(playerPos.ToPoint(), new Point(myPlayerTexture.Width, myPlayerTexture.Height));
-            Vector2 tempEarlierMovement = playerPos;
+
             if (state == GameState.GameOver)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter))
@@ -237,17 +242,19 @@ namespace Monogame_Shooter
             if (myDirection == Direction.Left)
             {
 
-                gunBarrelPos = new Vector2(playerPos.X - 100, playerPos.Y + 150);
+                gunBarrelPos = new Vector2(playerPos.X - 100, playerPos.Y + 50);
                 muzzleFlashPos = gunBarrelPos;
                 muzzleFlashPos.X -= muzzleFlashArray[0].Width / 2;
             }
             else
             {
-                gunBarrelPos = new Vector2(playerPos.X + myPlayerTexture.Width + 100, playerPos.Y + 150);
+                gunBarrelPos = new Vector2(playerPos.X + myPlayerTexture.Width + 100, playerPos.Y + 50);
                 muzzleFlashPos = gunBarrelPos;
                 muzzleFlashPos.X += myGun[(int)myDirection].Width;
             }
+
             muzzleFlashPos.Y -= muzzleFlashArray[0].Height / 4;
+
             if (keyState.IsKeyDown(Keys.Up) && myJumpFlag)
             {
                 myJumpForce = 30f;
@@ -257,16 +264,41 @@ namespace Monogame_Shooter
             playerPos.Y -= myJumpForce;
             myJumpForce -= myGravity;
 
-            Platform tempPlatform = PlatformManager.Intersects(hitBox);
-            if (tempPlatform != null)
+            Platform currentRectangle = PlatformManager.Intersects(hitBox);
+            if (currentRectangle != null)
             {
-                if (playerPos.Y + myPlayerTexture.Height > tempPlatform.myHitbox.Top - 10)
+                #region Collide
+                if (oldRectangle.Right < currentRectangle.myHitbox.Left && currentRectangle.myHitbox.Right >= oldRectangle.Left) // Left
+                {
+                    playerPos.X = currentRectangle.myHitbox.Location.X;
+                }
+                if (oldRectangle.Left >= currentRectangle.myHitbox.Right && currentRectangle.myHitbox.Left < oldRectangle.Right) // Right
+                {
+                    playerPos.X = currentRectangle.myHitbox.Location.X;
+                }
+                if (oldRectangle.Bottom < currentRectangle.myHitbox.Top && currentRectangle.myHitbox.Bottom >= oldRectangle.Top) // Up
+                {
+                    playerPos.Y = currentRectangle.myHitbox.Location.Y;
+                }
+                if (oldRectangle.Top >= currentRectangle.myHitbox.Bottom && currentRectangle.myHitbox.Top < oldRectangle.Bottom) // Down
                 {
                     myJumpForce = 0;
                     myGravity = 0;
                     myJumpFlag = true;
                 }
+                else
+                {
+                    playerPos.X = lastPosition.X;
+                    playerPos.Y = lastPosition.Y;
+                }
+                #endregion
 
+                //if (playerPos.Y > currentRectangle.myHitbox.Top - 10)
+                //{ 
+                //    myJumpForce = 0;
+                //    myGravity = 0;
+                //    myJumpFlag = true;
+                //}
             }
             else
             {
@@ -279,6 +311,9 @@ namespace Monogame_Shooter
                 myGravity = 0;
                 myJumpFlag = true;
             }
+
+            lastPosition.X = playerPos.X;
+            lastPosition.Y = playerPos.Y;
             base.Update(gameTime);
         }
 
@@ -290,6 +325,7 @@ namespace Monogame_Shooter
             //bg.Draw(spriteBatch);
             PlatformManager.Draw(spriteBatch);
 
+            //Rectangle oldRectangle = new Rectangle
             Rectangle bulletRectangle = new Rectangle(0, 0, myGun[(int)myDirection].Width, myGun[(int)myDirection].Height);
             Rectangle sourceRectangle = new Rectangle(0, 0, myPlayerTexture.Width, myPlayerTexture.Height);
             Rectangle muzzleFlashRectangle = new Rectangle(0, 0, muzzleFlashArray[0].Width, muzzleFlashArray[0].Height);
