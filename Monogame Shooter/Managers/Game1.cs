@@ -37,7 +37,7 @@ namespace Monogame_Shooter
         int oldBulletCount;
 
         //Player
-        private Texture2D myPlayer;
+        private Texture2D myPlayerTexture;
         private Texture2D myEnemy;
         private Texture2D hpBar;
         public static Vector2 playerPos;
@@ -107,7 +107,7 @@ namespace Monogame_Shooter
             MediaPlayer.IsRepeating = true;
             //bg.LoadContent(Content);
 
-            myPlayer = Content.Load<Texture2D>("player");
+            myPlayerTexture = Content.Load<Texture2D>("player");
             //myEnemy = Content.Load<Texture2D>("enemy");
             myGun = new Texture2D[]
             {
@@ -142,7 +142,7 @@ namespace Monogame_Shooter
         protected override void Update(GameTime gameTime)
         {
             PlatformManager.Update();
-            Rectangle playerHitBox = new Rectangle(playerPos.ToPoint(), new Point(myPlayer.Width, myPlayer.Height));
+            hitBox = new Rectangle(playerPos.ToPoint(), new Point(myPlayerTexture.Width, myPlayerTexture.Height));
             Vector2 tempEarlierMovement = playerPos;
             if (state == GameState.GameOver)
             {
@@ -222,7 +222,7 @@ namespace Monogame_Shooter
             if (keyState.IsKeyDown(Keys.Space) && canShoot >= 10 && ammo >= 1)
             {
                 //bulletSfx.Play();
-                mybullets.Add(new Bullets(new Vector2(playerPos.X + (myDirection == Direction.Right ? myPlayer.Width * 3 : 0), playerPos.Y - bullet.Height / 2), Content.Load<Texture2D>("bullet"), true, myDirection));
+                mybullets.Add(new Bullets(new Vector2(playerPos.X + (myDirection == Direction.Right ? myPlayerTexture.Width * 3 : 0), playerPos.Y - bullet.Height / 2), Content.Load<Texture2D>("bullet"), true, myDirection));
                 canShoot = 0;
                 ammo--;
             }
@@ -243,20 +243,37 @@ namespace Monogame_Shooter
             }
             else
             {
-                gunBarrelPos = new Vector2(playerPos.X + myPlayer.Width + 100, playerPos.Y + 150);
+                gunBarrelPos = new Vector2(playerPos.X + myPlayerTexture.Width + 100, playerPos.Y + 150);
                 muzzleFlashPos = gunBarrelPos;
                 muzzleFlashPos.X += myGun[(int)myDirection].Width;
             }
             muzzleFlashPos.Y -= muzzleFlashArray[0].Height / 4;
             if (keyState.IsKeyDown(Keys.Up) && myJumpFlag)
             {
-                myJumpForce = 20f;
+                myJumpForce = 30f;
                 myGravity = 1;
                 myJumpFlag = false;
             }
             playerPos.Y -= myJumpForce;
             myJumpForce -= myGravity;
-            if(playerPos.Y >= graphics.PreferredBackBufferHeight - myPlayer.Height)
+
+            Platform tempPlatform = PlatformManager.Intersects(hitBox);
+            if (tempPlatform != null)
+            {
+                if (playerPos.Y + myPlayerTexture.Height > tempPlatform.myHitbox.Top - 10)
+                {
+                    myJumpForce = 0;
+                    myGravity = 0;
+                    myJumpFlag = true;
+                }
+
+            }
+            else
+            {
+                myGravity = 1;
+                myJumpFlag = false;
+            }
+            if (playerPos.Y >= graphics.PreferredBackBufferHeight - myPlayerTexture.Height)
             {
                 myJumpForce = 0;
                 myGravity = 0;
@@ -274,13 +291,15 @@ namespace Monogame_Shooter
             PlatformManager.Draw(spriteBatch);
 
             Rectangle bulletRectangle = new Rectangle(0, 0, myGun[(int)myDirection].Width, myGun[(int)myDirection].Height);
-            Rectangle sourceRectangle = new Rectangle(0, 0, myPlayer.Width, myPlayer.Height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, myPlayerTexture.Width, myPlayerTexture.Height);
             Rectangle muzzleFlashRectangle = new Rectangle(0, 0, muzzleFlashArray[0].Width, muzzleFlashArray[0].Height);
             Vector2 gunOrigin = new Vector2(myGun[(int)myDirection].Width / 2, myGun[(int)myDirection].Height / 2);
             spriteBatch.Draw(myGun[(int)myDirection], gunBarrelPos, sourceRectangle, Color.White, 0, gunOrigin, 2, SpriteEffects.None, 0);
 
             Vector2 origin = new Vector2(0, 0);
-            spriteBatch.Draw(myPlayer, playerPos, sourceRectangle, Color.White, 0, origin, 1f, SpriteEffects.None, 1);
+
+            spriteBatch.Draw(myPlayerTexture, playerPos, sourceRectangle, Color.White, 0, origin, 1f, SpriteEffects.None, 1);
+
 
             for (int i = 0; i < mybullets.Count; i++)
             {

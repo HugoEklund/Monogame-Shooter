@@ -92,14 +92,28 @@ namespace Monogame_Shooter
                         tempPlatformTexture.SetData(0, new Rectangle(j * myBlockWidth, i * myBlockHeight, myBlockWidth, myBlockHeight), tempPixelData, 0, myBlockHeight * myBlockWidth);
                     }
                 }
-                myPlatforms.Add(new Platform(tempPlatformTexture, new Point(myRNG.Next(Game1.graphics.PreferredBackBufferWidth, Game1.graphics.PreferredBackBufferWidth * 2), myRNG.Next(128, Game1.graphics.PreferredBackBufferHeight - tempPlatformTexture.Height - 128))));
+                myPlatforms.Add(new Platform(tempPlatformTexture, new Point(myRNG.Next(Game1.graphics.PreferredBackBufferWidth, Game1.graphics.PreferredBackBufferWidth * 2),
+                myRNG.Next(128, Game1.graphics.PreferredBackBufferHeight - tempPlatformTexture.Height - 128))));
+
             }
         }
 
+        public static Platform Intersects(Rectangle playerHitbox)
+        {
+            for (int i = 0; i < myPlatforms.Count; i++)
+            {
+                if (myPlatforms[i].myHitbox.Intersects(playerHitbox))
+                {
+                    return myPlatforms[i];
+                }
+            }
+            return null;
+        }
         public static void Update()
         {
             for (int i = 0; i < myPlatforms.Count; i++)
             {
+                
                 myPlatforms[i].Update();
             }
         }
