@@ -18,14 +18,22 @@ namespace Monogame_Shooter
     {
         private int myHealth;
         private int myDamage;
+        public Texture2D mySprite;
+        public Rectangle myHitbox;
+        public Vector2 myPos, Speed;
+        public Stopwatch myShootTimer;
+        public bool isAlive;
+
         public abstract void Update();
         public abstract void Draw();
+        public abstract void Initialize();
 
         public int AccessEnemyHp
         {
             get => default(int);
             set
             {
+
             }
         }
 
@@ -34,7 +42,13 @@ namespace Monogame_Shooter
             get => default(int);
             set
             {
+
             }
+        }
+
+        public virtual void Damage(int someDamage)
+        {
+            myHealth -= someDamage;
         }
     }
 }

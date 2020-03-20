@@ -19,7 +19,7 @@ namespace Monogame_Shooter
         Left,
         Right
     }
-    public enum AnimationEnum
+    public enum PlayerAnimations
     {
         Run,
         Jump,
@@ -81,7 +81,7 @@ namespace Monogame_Shooter
         float myJumpForce = 0;
         float myGravity = 0;
         Direction myDirection;
-        AnimationEnum myAnimation;
+        PlayerAnimations myAnimation;
         GameState state;
 
         Animation runAnimation;
@@ -120,7 +120,7 @@ namespace Monogame_Shooter
             playerPos = new Vector2(650, 500);
             state = GameState.Game;
             myDirection = Direction.Right;
-            myAnimation = AnimationEnum.Run;
+            myAnimation = PlayerAnimations.Run;
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
             graphics.IsFullScreen = false;
@@ -134,44 +134,49 @@ namespace Monogame_Shooter
 
             bg.LoadContent(Content);
 
-            myRunAnimation = Content.Load<Texture2D>("runAnim");
-            //myShootAnimation = Content.Load<Texture2D>("shootAnim");
-            myJumpAnimation = Content.Load<Texture2D>("jumpAnim");
-            mySlashAnimation = Content.Load<Texture2D>("slashAnim");
-            myFallAnimation = Content.Load<Texture2D>("fallAnim");
+            myRunAnimation = Content.Load<Texture2D>(@"Player Sprites\runAnim");
+            myJumpAnimation = Content.Load<Texture2D>(@"Player Sprites\jumpAnim");
+            mySlashAnimation = Content.Load<Texture2D>(@"Player Sprites\slashAnim");
+            myFallAnimation = Content.Load<Texture2D>(@"Player Sprites\fallAnim");
+            //myShootAnimation = Content.Load<Texture2D>(@"Player Sprites\shootAnim");
 
-            music = Content.Load<Song>("music");
+            //myEnemy = Content.Load<Texture2D>(@"Enemy Sprites\enemy");
+
+            PlatformManager.Initialize(Content.Load<Texture2D>(@"Misc Sprites\platform"), 16, 16);
+            bullet = Content.Load<Texture2D>(@"Misc Sprites\bullet");
+            //redWinCounter = Content.Load<SpriteFont>("redwin");
+            //blueWinCounter = Content.Load<SpriteFont>("bluewin");
+
+            //hpBar = Content.Load<Texture2D>("hpbar");
+            ammoFont = Content.Load<SpriteFont>("ammo");
+
+            music = Content.Load<Song>(@"SFX\music");
+            //bulletSfx = Content.Load<SoundEffect>(@"SFX\bulletSfx");
+
             MediaPlayer.Volume = 1.0f;
             SoundEffect.MasterVolume = 0.4f;
             //MediaPlayer.Play(music);
             MediaPlayer.IsRepeating = true;
             //bg.LoadContent(Content);
 
-            //myEnemy = Content.Load<Texture2D>("enemy");
+
             myGun = new Texture2D[]
             {
-                Content.Load<Texture2D>("gun"),
-                Content.Load<Texture2D>("gunflip")
+                Content.Load<Texture2D>(@"Misc Sprites\gun"),
+                Content.Load<Texture2D>(@"Misc Sprites\gunflip")
             };
 
             muzzleFlashArray = new Texture2D[]
             {
-                Content.Load<Texture2D>("flash1-1"),
-                Content.Load<Texture2D>("flash1-2"),
-                Content.Load<Texture2D>("flash2-1"),
-                Content.Load<Texture2D>("flash2-2"),
+                Content.Load<Texture2D>(@"Misc Sprites\flash1-1"),
+                Content.Load<Texture2D>(@"Misc Sprites\flash1-2"),
+                Content.Load<Texture2D>(@"Misc Sprites\flash2-1"),
+                Content.Load<Texture2D>(@"Misc Sprites\flash2-2"),
             };
 
-            myPlayerTexture = Content.Load<Texture2D>("player");
+            myPlayerTexture = Content.Load<Texture2D>(@"Player Sprites\player");
 
-            //hpBar = Content.Load<Texture2D>("hpbar");
-            //bulletSfx = Content.Load<SoundEffect>("bulletSfx");
-            PlatformManager.Initialize(Content.Load<Texture2D>("platform"), 16, 16);
-            ammoFont = Content.Load<SpriteFont>("ammo");
-            bullet = Content.Load<Texture2D>("bullet");
 
-            //redWinCounter = Content.Load<SpriteFont>("redwin");
-            //blueWinCounter = Content.Load<SpriteFont>("bluewin");
 
             fallAnimation = new Animation(myFallAnimation, 2, 1, 5);
             //myAnimation = new Animation(myShootAnimation, 6, 1, 8);
@@ -206,12 +211,12 @@ namespace Monogame_Shooter
                 {
                     if (playerPos.Y < previousPlayerPos.Y)
                     {
-                        myAnimation = AnimationEnum.Jump;
+                        myAnimation = PlayerAnimations.Jump;
                         jumpAnimation.Update(gameTime);
                     }
                     else if (playerPos.Y > previousPlayerPos.Y)
                     {
-                        myAnimation = AnimationEnum.Fall;
+                        myAnimation = PlayerAnimations.Fall;
                         fallAnimation.Update(gameTime);
                     }
                 }
@@ -221,7 +226,7 @@ namespace Monogame_Shooter
             {
                 if (AnimationUpdate)
                 {
-                    myAnimation = AnimationEnum.Run;
+                    myAnimation = PlayerAnimations.Run;
                     runAnimation.Update(gameTime);
                 }
             }
@@ -313,7 +318,7 @@ namespace Monogame_Shooter
             if (keyState.IsKeyDown(Keys.Space) && canShoot >= 10 && ammo >= 1)
             {
                 //bulletSfx.Play();
-                mybullets.Add(new Bullets(new Vector2(playerPos.X + (myDirection == Direction.Right ? myPlayerTexture.Width * 3 : 0), playerPos.Y - bullet.Height / 2 + 50), Content.Load<Texture2D>("bullet"), true, myDirection));
+                //mybullets.Add(new Bullets(new Vector2(playerPos.X + (myDirection == Direction.Right ? myPlayerTexture.Width * 3 : 0), playerPos.Y - bullet.Height / 2 + 50), Content.Load<Texture2D>("bullet"), true, myDirection));
                 canShoot = 0;
                 ammo--;
                 myShootFlag = true;
@@ -414,23 +419,23 @@ namespace Monogame_Shooter
 
             Vector2 origin = new Vector2(0, 0);
 
-            if (myAnimation == AnimationEnum.Run)
+            if (myAnimation == PlayerAnimations.Run)
             {
                 spriteBatch.Draw(runAnimation.GetCurrentImage, playerPos, Color.White);
             }
-            if (myAnimation == AnimationEnum.Jump)
+            if (myAnimation == PlayerAnimations.Jump)
             {
                 spriteBatch.Draw(jumpAnimation.GetCurrentImage, playerPos, Color.White);
             }
-            if (myAnimation == AnimationEnum.Shoot)
+            if (myAnimation == PlayerAnimations.Shoot)
             {
                 spriteBatch.Draw(shootAnimation.GetCurrentImage, playerPos, Color.White);
             }
-            if (myAnimation == AnimationEnum.SlashAttack)
+            if (myAnimation == PlayerAnimations.SlashAttack)
             {
                 spriteBatch.Draw(slashAnimation.GetCurrentImage, playerPos, Color.White);
             }
-            if (myAnimation == AnimationEnum.Fall)
+            if (myAnimation == PlayerAnimations.Fall)
             {
                 spriteBatch.Draw(fallAnimation.GetCurrentImage, playerPos, Color.White);
             }

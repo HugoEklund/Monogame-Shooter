@@ -27,7 +27,7 @@ namespace Monogame_Shooter
         // Load Content
         public void LoadContent(ContentManager Content)
         {
-            textureBg = Content.Load<Texture2D>("background");
+            textureBg = Content.Load<Texture2D>(@"Misc Sprites\background");
 
         }
 
