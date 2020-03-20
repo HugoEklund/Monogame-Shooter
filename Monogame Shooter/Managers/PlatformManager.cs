@@ -43,6 +43,7 @@ namespace Monogame_Shooter
         {
             for (int n = 0; n < aCount; n++)
             {
+
                 int tempBlockCountWidth = myRNG.Next(18, 25);
                 int tempBlockCountHeight = myRNG.Next(3, 5);
                 Texture2D tempPlatformTexture = new Texture2D(Game1.graphics.GraphicsDevice, tempBlockCountWidth * myBlockWidth, tempBlockCountHeight * myBlockHeight);
@@ -92,28 +93,38 @@ namespace Monogame_Shooter
                         tempPlatformTexture.SetData(0, new Rectangle(j * myBlockWidth, i * myBlockHeight, myBlockWidth, myBlockHeight), tempPixelData, 0, myBlockHeight * myBlockWidth);
                     }
                 }
-                myPlatforms.Add(new Platform(tempPlatformTexture, new Point(myRNG.Next(Game1.graphics.PreferredBackBufferWidth, Game1.graphics.PreferredBackBufferWidth * 2),
-                myRNG.Next(128, Game1.graphics.PreferredBackBufferHeight - tempPlatformTexture.Height - 128))));
+                if(n == 0)
+                {
+                    myPlatforms.Add(new Platform(tempPlatformTexture, new Point(Game1.graphics.PreferredBackBufferWidth + n * 25 * 20,
+                       700)));
+                }
+                else
+                {
+                    myPlatforms.Add(new Platform(tempPlatformTexture, new Point(Game1.graphics.PreferredBackBufferWidth + n * 25 * 20,
+                        Math.Max(Math.Min(myRNG.Next(myPlatforms[n -1].GetHitBox.Location.Y - 256, myPlatforms[n - 1].GetHitBox.Location.Y + 256), Game1.graphics.PreferredBackBufferHeight - 128), 128))));
+                }
+
+                
 
             }
         }
 
-        public static Platform Intersects(Rectangle playerHitbox)
+        public static List<Platform> Intersects(Rectangle playerHitbox)
         {
+            List<Platform> tempPlatforms = new List<Platform>();
             for (int i = 0; i < myPlatforms.Count; i++)
             {
-                if (myPlatforms[i].myHitbox.Intersects(playerHitbox))
+                if (myPlatforms[i].GetHitBox.Intersects(playerHitbox))
                 {
-                    return myPlatforms[i];
+                    tempPlatforms.Add(myPlatforms[i]);
                 }
             }
-            return null;
+            return tempPlatforms;
         }
         public static void Update()
         {
             for (int i = 0; i < myPlatforms.Count; i++)
-            {
-                
+            {          
                 myPlatforms[i].Update();
             }
         }

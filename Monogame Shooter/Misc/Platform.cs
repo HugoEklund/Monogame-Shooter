@@ -16,8 +16,11 @@ namespace Monogame_Shooter
 {
     public class Platform
     {
+        public int GetSpeed { get => mySpeed; }
+        public Rectangle GetHitBox { get => myHitbox; }
         public Texture2D mySprite;
-        public Rectangle myHitbox;
+        int mySpeed = 3;
+        Rectangle myHitbox;
 
         public Platform(Texture2D aTexture, Point aPosition)
         {
@@ -35,7 +38,7 @@ namespace Monogame_Shooter
 
         public void Update()
         {
-            myHitbox.Location -= new Point(3, 0);
+            myHitbox.Location -= new Point(mySpeed, 0);
         }
     }
 }

@@ -41,16 +41,15 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Managers\AnimatorManager.cs" />
-    <Compile Include="Units\Platform.cs" />
+    <Compile Include="Managers\BackgroundManager.cs" />
+    <Compile Include="Misc\Platform.cs" />
     <Compile Include="Managers\PlatformManager.cs" />
-    <Compile Include="Units\Animation.cs" />
-    <Compile Include="Managers\Background.cs" />
-    <Compile Include="Managers\BaseEnemy.cs" />
-    <Compile Include="Units\Bullets.cs" />
-    <Compile Include="Units\Enemy.cs" />
+    <Compile Include="Misc\Animation.cs" />
+    <Compile Include="Managers\EnemyManager.cs" />
+    <Compile Include="Misc\Bullets.cs" />
+    <Compile Include="Misc\Enemy.cs" />
     <Compile Include="Managers\Game1.cs" />
-    <Compile Include="Units\Player.cs" />
+    <Compile Include="Misc\Player.cs" />
     <Compile Include="Managers\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,6 +66,7 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
